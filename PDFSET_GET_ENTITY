@@ -1,0 +1,23 @@
+METHOD pdfset_get_entity.
+  DATA:
+  lt_keys     TYPE /iwbep/t_mgw_tech_pairs,
+  ls_key      TYPE /iwbep/s_mgw_tech_pair,
+  lv_customer TYPE s_customer,
+  lv_url      TYPE string.
+
+  lt_keys = io_tech_request_context->get_keys( ).
+
+  READ TABLE lt_keys WITH KEY name = 'CUSTOMER' INTO ls_key.
+
+  lv_customer = ls_key-value.
+
+  CALL FUNCTION 'Z_TEST_PDF_DISPLAY'
+    EXPORTING
+      i_customer = lv_customer
+    IMPORTING
+      e_url      = lv_url.
+
+  er_entity-customer = lv_customer.
+  er_entity-url = lv_url.
+
+ENDMETHOD.
