@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<script src="resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.ui.commons,sap.ui.table"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<!-- add sap.ui.table,sap.ui.ux3 and/or other libraries to 'data-sap-ui-libs' if required -->
+
+<script>
+ 
+
+var sURI = '/sap/opu/odata/sap/ZTESTPDF_SRV/';
+
+
+	oModel = new sap.ui.model.odata.ODataModel(sURI, false),
+	sap.ui.getCore().setModel(oModel);
+
+
+//create the ApplicationHeader control
+var oAppHeader = new sap.ui.commons.ApplicationHeader("appHeader"); 
+
+//configure the branding area
+oAppHeader.setLogoText("Display Smartform (PDF) in SAPUI5");
+
+//configure the welcome area
+oAppHeader.setDisplayWelcome(true);
+oAppHeader.setUserName("Chandrashekhar Mahajan");
+
+//configure the log off area
+oAppHeader.setDisplayLogoff(true);
+
+oAppHeader.placeAt("content");
+
+
+//Create Contact Details UI
+var oMatrix = new sap.ui.commons.layout.MatrixLayout({
+	id : 'matrix4',
+	layoutFixed : true,
+	width : '1000px',
+	columns : 5,
+	widths : ['150px', '250px', '200px', '200px', '200px'] });
+
+var oCell = new sap.ui.commons.layout.MatrixLayoutCell({
+	colSpan: 5 });
+
+var oTV = new sap.ui.commons.TextView({
+	id : 'TV-Head',
+	text : 'Invoice Details for Customer',
+	design : sap.ui.commons.TextViewDesign.H1 });
+
+oCell.addContent(oTV);
+oMatrix.createRow(oCell);
+
+var oLabel = new sap.ui.commons.Label({
+	id : 'L-Name',
+	text : 'Customer Number' });
+
+var oTF = new sap.ui.commons.TextField({
+	id : 'TF-Name',
+	tooltip : 'Customer Number',
+	width : '200px' });
+
+oLabel.setLabelFor(oTF);
+oMatrix.createRow(oLabel, oTF);
+
+
+//Create a panel and html instances
+var oPanel = new sap.ui.commons.Panel();
+var html = new sap.ui.core.HTML();     
+
+var oButton = new sap.ui.commons.Button({
+	id : 'B-Create',
+	text : 'Display PDF',
+	width : '10em',
+	press : function(){
+
+    	var sRead = "/pdfset(customer='" + oTF.getValue() + "')"	;
+    	
+    	oModel.read( sRead, null, null, true, function(oData, oResponse){
+			var pdfURL = oData.url;
+            
+            html.setContent("<iframe src=" + pdfURL + " width='700' height='700'></iframe>");
+  
+            oPanel.addContent(html);
+            oPanel.placeAt("content");
+            
+  			  
+        },function(){
+            alert("Read failed");});
+		
+	}
+	});
+
+
+oMatrix.createRow(oButton);
+
+//attach it to some element in the page
+oMatrix.placeAt('content');
+	
+	
+
+</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<div id="content"></div>
+	</body>
+</html>
